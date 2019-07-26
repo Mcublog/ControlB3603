@@ -145,3 +145,15 @@ Send cmd: OK
 2019-07-27 00:14:28.128920
 Send cmd: STATUS
 Send cmd: OK
+2019-07-27 01:20:30.783310
+Send cmd: VOLTAGE 3300
+Send cmd: OK
+2019-07-27 01:20:30.886325
+Send cmd: OUTPUT 1
+Send cmd: OK
+2019-07-27 01:20:30.995049
+Send cmd: OUTPUT 0
+Send cmd: OK
+2019-07-27 01:20:31.098729
+Send cmd: STATUS
+Send cmd: OK

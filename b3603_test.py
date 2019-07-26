@@ -65,7 +65,7 @@ def main():
 
     # states = list(map(lambda s: s.split(), data))
     # print(states)
-    output = parse_state('VOUT', data)
+    output = cmdr.parse_state('VOUT', data)
     if output:
         print(output)    
 

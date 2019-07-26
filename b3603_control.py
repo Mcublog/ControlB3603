@@ -44,25 +44,28 @@ class Control:
             self.__port.close()
 
     def parse_state(self, param, states):
-    params = ('OUTPUT', 'VIN', 'VOUT', 'COUT', 'CONSTANT', 'ACK')
-    states = list(map(lambda s: s.split(), states))
+        """
+        Parse status answer
+        :return: return some data from status data (example VIN, VOUT and etc)
+        """        
+        params = ('OUTPUT', 'VIN', 'VOUT', 'COUT', 'CONSTANT', 'ACK')
+        states = list(map(lambda s: s.split(), states))
 
-    if not list(filter(lambda p: p == param, params)):
-        return
+        if not list(filter(lambda p: p == param, params)):
+            return
         
-    if not ':' in param:
-        param = param + ':'
+        if not ':' in param:
+            param = param + ':'
 
-    for state in states:
-        if param in state:
-            try:
-                if (param == 'ACK:'):
-                    return states[0]
-                return state[1]
-            except: # States is broken
-                return 
-    return    
-
+        for state in states:
+            if param in state:
+                try:
+                    if (param == 'ACK:'):
+                        return states[0]
+                    return state[1]
+                except: # States is broken
+                    return 
+        return
 
     def send_cmd(self, cmd):
         """
