@@ -18,14 +18,21 @@ class Control:
         try:
             self.__port.open()       
         except IOError:
-            self.__close_connect("Can't open port")
+            self.close_connect("Can't open port")
         else:
-            print("B3603 " + self.__port.port + " port is open")
-            self.__connection = True     
+            self.__iprint("B3603 " + self.__port.port + " port is open")
+            self.__connection = True # Just to send cmd
+            data = self.send_cmd("STATUS")
+            if data == 0:
+                self.close_connect("No response")
+            else:
+                output = float(self.parse_state('VIN', data))
+                self.__iprint('B3603 VIN: ' + str(output))
+                self.__connection = True     
 
 
     def __del__(self):
-        self.__close_connect()
+        self.close_connect()
     
     
     def __iprint(self, msg: str):
@@ -36,7 +43,7 @@ class Control:
             print(msg)
 
 
-    def __close_connect(self, msg: str = 'B3603 Commander stop'):
+    def close_connect(self, msg: str = 'B3603 Commander stop'):
         print(msg)
         self.__connection = False
         if self.__port.is_open:
@@ -79,7 +86,7 @@ class Control:
             try:
                 self.__port.write(cmd.encode())
             except:
-                self.__close_connect("Can't write data port")
+                self.close_connect("Can't write data port")
             self.__iprint('B3603 Send cmd: ' + cmd.replace('\n', ''))
             ack = self.__read_ack()
             if debug:
