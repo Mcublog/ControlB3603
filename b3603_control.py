@@ -26,7 +26,11 @@ class Control:
             if data == 0:
                 self.close_connect("No response")
             else:
-                output = float(self.parse_state('VIN', data))
+                try:
+                    output = float(self.parse_state('VIN', data))
+                except:
+                    self.close_connect("No response")
+                    return
                 self.__iprint('B3603 VIN: ' + str(output))
                 self.__connection = True     
 
@@ -49,6 +53,7 @@ class Control:
         if self.__port.is_open:
             self.__iprint("B3603 " + self.__port.port + " port close")
             self.__port.close()
+            return 0
 
     def parse_state(self, param, states):
         """
@@ -88,7 +93,10 @@ class Control:
             except:
                 self.close_connect("Can't write data port")
             self.__iprint('B3603 Send cmd: ' + cmd.replace('\n', ''))
-            ack = self.__read_ack()
+            try:                                                    
+                ack = self.__read_ack()
+            except:
+                self.close_connect("Can't read data port")        
             if debug:
                 self.print_ack(ack)
         if ack:
@@ -116,13 +124,22 @@ class Control:
         """
         return self.__connection
         
-        
+    
+    def get_port(self):
+        """
+        Get current port
+        :return: current port
+        """
+        return self.__port
+
 
     def __read_ack(self):
         """
         Read B3603 ACK from port
         :return: array of strings or array with zero lenght    
         """
+        if self.__connection == False:
+            return self.close_connect("Port is close")
         for i in range(5):  # Waiting 500 ms maximum
             if self.__port.in_waiting:
                 break
