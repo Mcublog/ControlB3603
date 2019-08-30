@@ -10,16 +10,22 @@ class Control:
 
     def __init__(self, port):
         self.__port = serial.Serial()
-        self.__port.baudrate = 38400
+        self.__port.baudrate = 38600
         self.__port.port = port
         self.__port.timeout = 1
         self.__connection = False  # Connection property
         # Open Com
-        try:
-            self.__port.open()       
-        except IOError:
-            self.close_connect("Can't open port")
-        else:
+        for i in range(5):
+            try:
+                self.__port.open()
+                self.__connection = True
+                break
+            except IOError:
+                self.close_connect("Can't open port")
+            time.sleep(.1)  # Waiting 100 ms    
+
+        if self.__connection:
+            self.__connection = False
             self.__iprint("B3603 " + self.__port.port + " port is open")
             self.__connection = True # Just to send cmd
             data = self.send_cmd("STATUS")
@@ -32,7 +38,9 @@ class Control:
                     self.close_connect("No response")
                     return
                 self.__iprint('B3603 VIN: ' + str(output))
-                self.__connection = True     
+                self.__connection = True
+        else:
+            self.close_connect()    
 
 
     def __del__(self):
