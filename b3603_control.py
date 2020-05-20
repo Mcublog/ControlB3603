@@ -1,8 +1,8 @@
 ﻿import serial
 import time
 
-debug = 0  # Print debug message
-info_msg = 1  # Print info message
+DEBUG = 0  # Print debug message
+INFO_MSG = 1  # Print info message
 
 
 class Control:
@@ -22,7 +22,7 @@ class Control:
                 break
             except IOError:
                 self.close_connect("Can't open port")
-            time.sleep(.1)  # Waiting 100 ms    
+            time.sleep(.1)  # Waiting 100 ms
 
         if self.__connection:
             self.__connection = False
@@ -40,18 +40,18 @@ class Control:
                 self.__iprint('B3603 VIN: ' + str(output))
                 self.__connection = True
         else:
-            self.close_connect()    
+            self.close_connect()
 
 
     def __del__(self):
         self.close_connect()
-    
-    
+
+
     def __iprint(self, msg: str):
         """
-        Print info message 
+        Print info message
         """
-        if info_msg:
+        if INFO_MSG:
             print(msg)
 
 
@@ -67,13 +67,13 @@ class Control:
         """
         Parse status answer
         :return: return some data from status data (example VIN, VOUT and etc)
-        """        
+        """
         params = ('OUTPUT', 'VIN', 'VOUT', 'COUT', 'CONSTANT', 'ACK')
         states = list(map(lambda s: s.split(), states))
 
         if not list(filter(lambda p: p == param, params)):
             return
-        
+
         if not ':' in param:
             param = param + ':'
 
@@ -84,7 +84,7 @@ class Control:
                         return states[0]
                     return state[1]
                 except: # States is broken
-                    return 
+                    return
         return
 
     def send_cmd(self, cmd):
@@ -101,10 +101,10 @@ class Control:
             except:
                 self.close_connect("Can't write data port")
             self.__iprint('B3603 Send cmd: ' + cmd.replace('\n', ''))
-            try:                                                    
+            try:
                 ack = self.__read_ack()
             except:
-                self.close_connect("Can't read data port")        
+                self.close_connect("Can't read data port")
             if debug:
                 self.print_ack(ack)
         if ack:
@@ -131,8 +131,8 @@ class Control:
         :return: true if connect
         """
         return self.__connection
-        
-    
+
+
     def get_port(self):
         """
         Get current port
@@ -144,7 +144,7 @@ class Control:
     def __read_ack(self):
         """
         Read B3603 ACK from port
-        :return: array of strings or array with zero lenght    
+        :return: array of strings or array with zero lenght
         """
         if self.__connection == False:
             return self.close_connect("Port is close")
